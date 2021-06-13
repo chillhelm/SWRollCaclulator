@@ -15,21 +15,24 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include "RaiseCounter.h"
 
-#include <cmath>
+#ifndef __SWTRAITROLL_H__
+#define __SWTRAITROLL_H__
+#include "StochasticObject.h"
 
-RaiseCounter::RaiseCounter(const std::shared_ptr<StochasticObject>& pObject_): pObject(pObject_) {
-}
+class SWTraitRoll: public StochasticObject {
+    private:
+        unsigned int nTraitDieSides;
+        unsigned int nWildDieSides;
+        int nMod;
+    public:
+        SWTraitRoll(unsigned int nTraitDieSides, unsigned int nWildDieSides = 6, int nMod = 0);
+        virtual ~SWTraitRoll(void) = default;
 
-double RaiseCounter::distributionFunction(double dX) const {
-    if(dX<0)
-        return .0;
-    double dIntegerPartOfX{.0};
-    std::modf(dX, &dIntegerPartOfX);
-    return pObject->distributionFunction(dIntegerPartOfX*4.0 + 3.0);
-}
+        virtual double distributionFunction(double x) const;
+        virtual double getMinimum(void) const {return -1.;};
 
-double RaiseCounter::getMinimum(void) const {
-    return .0;
-}
+        int getMod(void) const {return nMod;};
+        void setMod(int nMod_) {nMod=nMod_;};
+};
+#endif

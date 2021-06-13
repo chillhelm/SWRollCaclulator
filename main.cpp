@@ -24,6 +24,7 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 #include "MaxConnector.h"
 #include "RaiseCounter.h"
 #include "FlatMod.h"
+#include "SWTraitRoll.h"
 
 int main(int argc, char* argv[]) {
     if(argc == 1) {
@@ -45,26 +46,18 @@ int main(int argc, char* argv[]) {
         std::cout << "Please give a positive, integer number greater than 1 as first parameter." << std::endl;
         return 1;
     }
-    auto pDie1 = std::make_shared<AcingDie>(nDieSides1);
-    auto pDie2 = std::make_shared<AcingDie>(nDieSides2);
-    auto pMaxConnector = std::make_shared<MaxConnector>(pDie1, pDie2);
-    auto pModdedRoll = std::make_shared<FlatMod>(pMaxConnector,dMod);
-    auto pRaiseCounter = std::make_shared<RaiseCounter>(pModdedRoll);
-    auto dCritFailProb = pMaxConnector->distributionFunction(1.0);
+    SWTraitRoll fullTraitRoll(nDieSides1, nDieSides2, dMod);
 
-    std::cout << "Probability of Critical Failure: "<<std::fixed << std::setprecision(2) <<  100.0*dCritFailProb<<"%"<<std::endl;
-    std::cout << "Probability of Failure: "<<std::fixed << std::setprecision(2) <<  100.0*(pRaiseCounter->distributionFunction(0.) + (dMod>=3.0? dCritFailProb : .0))<<"%"<<std::endl;
+    std::cout << "Probability of Critical Failure: "<<std::fixed << std::setprecision(2) << 100.*fullTraitRoll.distributionFunction(-1.)<< " %" << std::endl;
+    std::cout << "Probability of Failure: "<<std::fixed << std::setprecision(2) <<  100.*fullTraitRoll.distributionFunction(.0)<<" %"<<std::endl;
     std::cout << resetiosflags(std::ios_base::floatfield);
     double lastProb = 1.;
     double x = 1.;
     while (lastProb>.01) {
         std::cout << "Probability of at least "<<std::noshowpos<<x<<" Successes & Raises:  ";
-        if(dMod+1.>=4.*x)
-            std::cout << std::fixed << std::setprecision(2) <<  100.0*(1.0 - pRaiseCounter->distributionFunction(x-1.) - dCritFailProb)<<"%"<<std::endl;
-        else
-            std::cout <<  std::fixed << std::setprecision(2) <<  100.0*(1.0 - pRaiseCounter->distributionFunction(x-1.))<<"%" <<std::endl;
+        std::cout << std::fixed << std::setprecision(2) << 100.0*(1.-fullTraitRoll.distributionFunction(x-1.)) << "%"<<std::endl;
         std::cout << resetiosflags(std::ios_base::floatfield);
-        lastProb = 1.0 - pRaiseCounter->distributionFunction(x - 1.) - (dMod+1.>=4.*x? dCritFailProb : .0);
+        lastProb = (1.-fullTraitRoll.distributionFunction(x-1.));
         ++x;
     }
 

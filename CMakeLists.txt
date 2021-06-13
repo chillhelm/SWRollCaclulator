@@ -19,7 +19,7 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 cmake_minimum_required(VERSION 3.4)
 project("SW Roll Calculator")
 
-set(STOCOBJECT_SOURCES AcingDie.cpp FlatMod.cpp MaxConnector.cpp RaiseCounter.cpp AdderObject.cpp BranchObject.cpp WoundCalculatorObject.cpp)
+set(STOCOBJECT_SOURCES AcingDie.cpp FlatMod.cpp MaxConnector.cpp RaiseCounter.cpp AdderObject.cpp BranchObject.cpp WoundCalculatorObject.cpp SWTraitRoll.cpp)
 
 add_library(SWDiceRolls STATIC ${STOCOBJECT_SOURCES})
 
