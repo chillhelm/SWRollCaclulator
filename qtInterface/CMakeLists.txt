@@ -20,5 +20,5 @@ find_package(Qt5 COMPONENTS Core Widgets Charts REQUIRED )
 
 add_executable(qtInterface main.cpp)
 
-target_link_libraries(qtInterface Qt5::Widgets Qt5::Charts)
+target_link_libraries(qtInterface SWDiceRolls Qt5::Widgets Qt5::Charts)
 
