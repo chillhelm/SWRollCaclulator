@@ -21,5 +21,10 @@ project("SW Roll Calculator")
 
 set(STOCOBJECT_SOURCES AcingDie.cpp FlatMod.cpp MaxConnector.cpp RaiseCounter.cpp AdderObject.cpp BranchObject.cpp WoundCalculatorObject.cpp)
 
-add_executable(SWSuccessCalculator main.cpp ${STOCOBJECT_SOURCES})
-add_executable(SWDmgCalculator main_attack.cpp ${STOCOBJECT_SOURCES})
+add_library(SWDiceRolls STATIC ${STOCOBJECT_SOURCES})
+
+add_executable(SWSuccessCalculator main.cpp)
+add_executable(SWDmgCalculator main_attack.cpp)
+
+target_link_libraries(SWSuccessCalculator SWDiceRolls)
+target_link_libraries(SWDmgCalculator SWDiceRolls)
