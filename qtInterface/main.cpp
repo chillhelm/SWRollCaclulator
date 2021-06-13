@@ -28,15 +28,12 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 #include <QtCharts/QLegend>
 #include <QtCharts/QBarCategoryAxis>
 #include <QtCharts/QValueAxis>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QFrame>
 
-#include "../AcingDie.h"
-#include "../MaxConnector.h"
-#include "../RaiseCounter.h"
-#include "../FlatMod.h"
-#include "../BranchObject.h"
-#include "../ConstantObject.h"
-#include "../AdderObject.h"
-#include "../WoundCalculatorObject.h"
+#include "RollCompositionWidget.h"
 
 void fillBarSetFromStochasticObject(QtCharts::QBarSet *set, const std::shared_ptr<StochasticObject>& pStochasticObject) {
     set->remove(0, set->count());
@@ -46,45 +43,23 @@ void fillBarSetFromStochasticObject(QtCharts::QBarSet *set, const std::shared_pt
     *set << (1.-pStochasticObject->distributionFunction(4.));
 }
 
+void replot(QtCharts::QChart *chart, RollCompositionWidget* rcw1) {
+    chart->removeAllSeries();
+    QtCharts::QBarSet *set0 = new QtCharts::QBarSet("Roll 1");
+    fillBarSetFromStochasticObject(set0, rcw1->getRoll());
+    QtCharts::QBarSeries *series = new QtCharts::QBarSeries;
+    series->append(set0);
+    chart->addSeries(series);
+}
+
 int main( int argc, char **argv )
 {
-    unsigned int nDieSides1 = 4;
-    unsigned int nDieSides2 = 6;
-
-    unsigned int nDmgDieSides1 = 8;
-    unsigned int nDmgDieSides2 = 6;
-    unsigned int nDmgDieRaise = 6;
-    double dMod = 0.;
-
-    auto pAttackDie1 = std::make_shared<AcingDie>(nDieSides1);
-    auto pAttackDie2 = std::make_shared<AcingDie>(nDieSides2);
-    auto pAttackMaxConnector = std::make_shared<MaxConnector>(pAttackDie1, pAttackDie2);
-    auto pAttackModdedRoll = std::make_shared<FlatMod>(pAttackMaxConnector,dMod);
-    auto pAttackRaiseCounter = std::make_shared<RaiseCounter>(pAttackModdedRoll);
-
-
-    auto pDmgDie1 = std::make_shared<AcingDie>(nDmgDieSides1);
-    auto pDmgDie2 = std::make_shared<AcingDie>(nDmgDieSides2);
-    auto pDmgDieRaise = std::make_shared<AcingDie>(nDmgDieRaise);
-
-    auto pTotalDmg = std::make_shared<AdderObject>(pDmgDie1, pDmgDie2);
-    auto pTotalRaiseDmg = std::make_shared<AdderObject>(pTotalDmg, pDmgDieRaise);
-    auto pNoHitDmg = std::make_shared<ConstantObject>(.0);
-
-    bool bShaken = true;
-    auto pWoundCalculator = std::make_shared<WoundCalculatorObject>(pTotalDmg, 4, bShaken);
-    auto pWoundAfterRaiseCalculator = std::make_shared<WoundCalculatorObject>(pTotalRaiseDmg, 4, bShaken);
-
-    auto branchObject = std::make_shared<BranchObject>(pAttackRaiseCounter, pWoundAfterRaiseCalculator);
-
-    branchObject->vBranches.insert(Branch(pNoHitDmg, 0.));
-    branchObject->vBranches.insert(Branch(pWoundCalculator, 1.));
-
     QApplication a( argc, argv );
 
+    RollCompositionWidget *rcw1 = new RollCompositionWidget;
     QtCharts::QBarSet *set0 = new QtCharts::QBarSet("Roll 1");
 
-    fillBarSetFromStochasticObject(set0, branchObject);
+    fillBarSetFromStochasticObject(set0, rcw1->getRoll());
 
     QtCharts::QBarSeries *series = new QtCharts::QBarSeries;
     series->append(set0);
@@ -101,14 +76,25 @@ int main( int argc, char **argv )
     series->attachAxis(axisX);
 
     QtCharts::QValueAxis *axisY = new QtCharts::QValueAxis();
-    axisY->setRange(0,1);
+    //axisY->setRange(0,1);
     chart->addAxis(axisY, Qt::AlignLeft);
     series->attachAxis(axisY);
     QtCharts::QChartView *chartView = new QtCharts::QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
-    QMainWindow window;
-    window.setCentralWidget(chartView);
-    window.resize(420, 300);
+    QWidget window;
+    QVBoxLayout *VBoxLayout = new QVBoxLayout(&window);
+    QWidget RollSetupRow;
+    QHBoxLayout *HBoxLayout = new QHBoxLayout(&RollSetupRow);
+    HBoxLayout->addWidget(rcw1);
+    QPushButton *plotButton = new QPushButton("Plot", &RollSetupRow);
+    QObject::connect(plotButton, QOverload<bool>::of(&QPushButton::clicked), [rcw1, chart](bool){replot(chart,rcw1);});
+    plotButton->resize(120,120);
+    HBoxLayout->addWidget(plotButton);
+    RollSetupRow.setMinimumHeight(120);
+    VBoxLayout->addWidget(&RollSetupRow);
+    VBoxLayout->addWidget(chartView);
+
+    window.resize(900, 800);
     window.show();
     return a.exec();
 }
