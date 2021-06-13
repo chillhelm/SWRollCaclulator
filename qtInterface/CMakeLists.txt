@@ -16,18 +16,9 @@ You should have received a copy of the GNU General Public License
 along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 
-cmake_minimum_required(VERSION 3.4)
-project("SW Roll Calculator")
+find_package(Qt5 COMPONENTS Core Widgets Charts REQUIRED )
 
-set(STOCOBJECT_SOURCES AcingDie.cpp FlatMod.cpp MaxConnector.cpp RaiseCounter.cpp AdderObject.cpp BranchObject.cpp WoundCalculatorObject.cpp SWTraitRoll.cpp)
+add_executable(qtInterface main.cpp)
 
-add_library(SWDiceRolls STATIC ${STOCOBJECT_SOURCES})
-
-add_executable(SWSuccessCalculator main.cpp)
-add_executable(SWDmgCalculator main_attack.cpp)
-
-target_link_libraries(SWSuccessCalculator SWDiceRolls)
-target_link_libraries(SWDmgCalculator SWDiceRolls)
-
-add_subdirectory(qtInterface)
+target_link_libraries(qtInterface Qt5::Widgets Qt5::Charts)
 
