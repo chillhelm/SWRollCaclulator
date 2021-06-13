@@ -1,14 +1,6 @@
 #include <QLabel>
-#include <iostream>
 
-#include "../AcingDie.h"
-#include "../MaxConnector.h"
-#include "../RaiseCounter.h"
-#include "../FlatMod.h"
-#include "../BranchObject.h"
-#include "../ConstantObject.h"
-#include "../AdderObject.h"
-#include "../WoundCalculatorObject.h"
+#include "../SWTraitRoll.h"
 
 #include "RollCompositionWidget.h"
 
@@ -59,26 +51,16 @@ RollCompositionWidget::~RollCompositionWidget(void) {
 
 std::shared_ptr<StochasticObject> RollCompositionWidget::getRoll(void) const {
 
-    auto pTraitDie = std::make_shared<AcingDie>(nTraitDieSides);
-    auto pWildDie = std::make_shared<AcingDie>(nWildDieSides);
-    auto pAttackMaxConnector = std::make_shared<MaxConnector>(pTraitDie, pWildDie);
-    auto pAttackModdedRoll = std::make_shared<FlatMod>(pAttackMaxConnector,nMod);
-    auto pAttackRaiseCounter = std::make_shared<RaiseCounter>(pAttackModdedRoll);
-
-
-
-    return pAttackRaiseCounter;
+    return std::make_shared<SWTraitRoll>(nTraitDieSides, nWildDieSides, nMod);
 }
 
 void RollCompositionWidget::traitDieChanged(int newIndex) {
     nTraitDieSides = 2*(newIndex+2);
-    std::cout << "Trait Die Sides: "<<nTraitDieSides<<std::endl;
 }
 
 
 void RollCompositionWidget::wildDieChanged(int newIndex) {
     nWildDieSides = 2*(newIndex+2);
-    std::cout << "Wild Die Sides: "<<nWildDieSides<<std::endl;
 }
 
 void RollCompositionWidget::modifierChanged(void) {

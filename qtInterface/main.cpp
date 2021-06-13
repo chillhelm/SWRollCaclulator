@@ -17,6 +17,7 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <memory>
+#include <cmath>
 
 #include <qapplication.h>
 #include <qpushbutton.h>
@@ -35,21 +36,26 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "RollCompositionWidget.h"
 
-void fillBarSetFromStochasticObject(QtCharts::QBarSet *set, const std::shared_ptr<StochasticObject>& pStochasticObject) {
+double fillBarSetFromStochasticObject(QtCharts::QBarSet *set, const std::shared_ptr<StochasticObject>& pStochasticObject) {
+    double max = -std::numeric_limits<double>::infinity();
     set->remove(0, set->count());
-    for(double x=0;x<5;++x) {
-        *set << pStochasticObject->distributionFunction(x) - pStochasticObject->distributionFunction(x-1.);
+    for(double x=-1.;x<5;++x) {
+        double p =100.*(pStochasticObject->distributionFunction(x) - pStochasticObject->distributionFunction(x-1.));
+        *set << p;
+        max = std::max(p,max);
     }
     *set << (1.-pStochasticObject->distributionFunction(4.));
+    return max;
 }
 
-void replot(QtCharts::QChart *chart, RollCompositionWidget* rcw1) {
+void replot(QtCharts::QChart *chart,QtCharts::QValueAxis  *y_axis, RollCompositionWidget* rcw1) {
     chart->removeAllSeries();
     QtCharts::QBarSet *set0 = new QtCharts::QBarSet("Roll 1");
-    fillBarSetFromStochasticObject(set0, rcw1->getRoll());
+    double max = fillBarSetFromStochasticObject(set0, rcw1->getRoll());
     QtCharts::QBarSeries *series = new QtCharts::QBarSeries;
     series->append(set0);
     chart->addSeries(series);
+    y_axis->setMax(max);
 }
 
 int main( int argc, char **argv )
@@ -69,7 +75,7 @@ int main( int argc, char **argv )
     chart->setTitle("some title");
     chart->setAnimationOptions(QtCharts::QChart::SeriesAnimations);
     QStringList categories;
-    categories << "No Wound" << "1" << "2" << "3" << "4" << ">4";
+    categories << "Crit. Fail" << "Fail" << "Success" << "S+1 Raise" << "S+2 Raise" << "S+3Raise"<<"S+>4 Raise";
     QtCharts::QBarCategoryAxis *axisX = new QtCharts::QBarCategoryAxis();
     axisX->append(categories);
     chart->addAxis(axisX, Qt::AlignBottom);
@@ -87,7 +93,7 @@ int main( int argc, char **argv )
     QHBoxLayout *HBoxLayout = new QHBoxLayout(&RollSetupRow);
     HBoxLayout->addWidget(rcw1);
     QPushButton *plotButton = new QPushButton("Plot", &RollSetupRow);
-    QObject::connect(plotButton, QOverload<bool>::of(&QPushButton::clicked), [rcw1, chart](bool){replot(chart,rcw1);});
+    QObject::connect(plotButton, QOverload<bool>::of(&QPushButton::clicked), [rcw1,axisY, chart](bool){replot(chart,axisY, rcw1);});
     plotButton->resize(120,120);
     HBoxLayout->addWidget(plotButton);
     RollSetupRow.setMinimumHeight(120);
