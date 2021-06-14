@@ -24,6 +24,7 @@ class SWTraitRoll: public StochasticObject {
     private:
         unsigned int nTraitDieSides;
         unsigned int nWildDieSides;
+        unsigned int nRerolls;
         int nMod;
     public:
         SWTraitRoll(unsigned int nTraitDieSides, unsigned int nWildDieSides = 6, int nMod = 0);
@@ -34,5 +35,8 @@ class SWTraitRoll: public StochasticObject {
 
         int getMod(void) const {return nMod;};
         void setMod(int nMod_) {nMod=nMod_;};
+
+        unsigned int getRerolls(void) const {return nRerolls;};
+        void setRerolls(unsigned int nRerolls_) {nRerolls=nRerolls_;};
 };
 #endif

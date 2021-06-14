@@ -28,11 +28,12 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 
 int main(int argc, char* argv[]) {
     if(argc == 1) {
-        std::cout << "Usage:\n"<<argv[0]<<" TraitDie [Modifier] [WildDie]" << std::endl;
+        std::cout << "Usage:\n"<<argv[0]<<" TraitDie [Modifier] [WildDie] [Rerolls]" << std::endl;
         return 1;
     }
-    unsigned int nDieSides1{4},nDieSides2{6};;
+    unsigned int nDieSides1{4},nDieSides2{6};
     double dMod = .0;
+    unsigned int nRerolls{0};
     if(argc>1) {
         nDieSides1 = std::stoul(std::string{argv[1]});
     }
@@ -40,22 +41,31 @@ int main(int argc, char* argv[]) {
         dMod = std::stod(std::string{argv[2]});
     }
     if(argc>3) {
-        nDieSides2 = std::stod(std::string{argv[3]});
+        nDieSides2 = std::stoul(std::string{argv[3]});
+    }
+    if(argc>4) {
+        nRerolls = std::stoul(std::string{argv[4]});
     }
     if (nDieSides1 <= 1) {
         std::cout << "Please give a positive, integer number greater than 1 as first parameter." << std::endl;
         return 1;
     }
     SWTraitRoll fullTraitRoll(nDieSides1, nDieSides2, dMod);
+    std::cout << "Rolling D"<<nDieSides1<<" and D"<<nDieSides2<<" +"<<dMod<<" "<<nRerolls+1<<" times." << std::endl;
+    fullTraitRoll.setRerolls(nRerolls);
 
-    std::cout << "Probability of Critical Failure: "<<std::fixed << std::setprecision(2) << 100.*fullTraitRoll.distributionFunction(-1.)<< " %" << std::endl;
-    std::cout << "Probability of Failure: "<<std::fixed << std::setprecision(2) <<  100.*fullTraitRoll.distributionFunction(.0)<<" %"<<std::endl;
+    std::cout << "Probability of Critical Failure: "<<std::fixed << /*std::setprecision(2) << */100.*fullTraitRoll.distributionFunction(-1.)<< " %" << std::endl;
+    std::cout << "Probability of Failure: "<<std::fixed << /*std::setprecision(2) << */ 100.*fullTraitRoll.distributionFunction(.0)<<" %"<<std::endl;
     std::cout << resetiosflags(std::ios_base::floatfield);
     double lastProb = 1.;
     double x = 1.;
     while (lastProb>.01) {
+        std::cout << "Probability of no more than "<<std::noshowpos<<x<<" Successes & Raises:  ";
+        std::cout << std::fixed << std::setprecision(2) << 100.0*fullTraitRoll.distributionFunction(x) << "%"<<std::endl;
         std::cout << "Probability of at least "<<std::noshowpos<<x<<" Successes & Raises:  ";
         std::cout << std::fixed << std::setprecision(2) << 100.0*(1.-fullTraitRoll.distributionFunction(x-1.)) << "%"<<std::endl;
+        std::cout << "Probability of exactly "<<std::noshowpos<<x<<" Successes & Raises:  ";
+        std::cout << std::fixed << std::setprecision(2) << 100.0*(fullTraitRoll.distributionFunction(x)-fullTraitRoll.distributionFunction(x-1.)) << "%"<<std::endl;
         std::cout << resetiosflags(std::ios_base::floatfield);
         lastProb = (1.-fullTraitRoll.distributionFunction(x-1.));
         ++x;
