@@ -26,23 +26,27 @@ RollCompositionWidget::RollCompositionWidget(QWidget *parent): QWidget(parent), 
     wildDieComboBox->addItem("d10");
     wildDieComboBox->addItem("d12");
     wildDieComboBox->setCurrentIndex(1);
-    modifierLineEdit = new QLineEdit(frame);
-    rerollsLineEdit = new QLineEdit(frame);
+    modifierSpinBox = new QSpinBox(frame);
+    rerollsSpinBox = new QSpinBox(frame);
     gridLayout->addWidget(traitDieComboBox, 1, 2);
     gridLayout->addWidget(wildDieComboBox, 2, 2);
-    gridLayout->addWidget(modifierLineEdit, 3, 2);
-    gridLayout->addWidget(rerollsLineEdit, 4, 2);
-    modifierLineEdit->setInputMask("###");
-    rerollsLineEdit->setInputMask("###");
+    gridLayout->addWidget(modifierSpinBox, 3, 2);
+    gridLayout->addWidget(rerollsSpinBox, 4, 2);
+
+    modifierSpinBox->setValue(0);
+    modifierSpinBox->setSingleStep(1);
+    rerollsSpinBox->setValue(0);
+    rerollsSpinBox->setSingleStep(1);
+    rerollsSpinBox->setMinimum(0);
 
     QObject::connect(traitDieComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             [this](int newIndex) {this->traitDieChanged(newIndex);});
     QObject::connect(wildDieComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             [this](int newIndex) {this->wildDieChanged (newIndex);});
-    QObject::connect(modifierLineEdit, QOverload<>::of(&QLineEdit::editingFinished),
-            [this]() {this->modifierChanged();});
-    QObject::connect(rerollsLineEdit, QOverload<>::of(&QLineEdit::editingFinished),
-            [this]() {this->rerollsChanged();});
+    QObject::connect(modifierSpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
+            [this](int val) {this->modifierChanged(val);});
+    QObject::connect(rerollsSpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
+            [this](int val) {this->rerollsChanged(val);});
 
     resize(100,100);
 }
@@ -50,8 +54,8 @@ RollCompositionWidget::RollCompositionWidget(QWidget *parent): QWidget(parent), 
 RollCompositionWidget::~RollCompositionWidget(void) {
     delete traitDieComboBox;
     delete wildDieComboBox;
-    delete modifierLineEdit;
-    delete rerollsLineEdit;
+    delete modifierSpinBox;
+    delete rerollsSpinBox;
     delete frame;
 }
 
@@ -70,10 +74,10 @@ void RollCompositionWidget::wildDieChanged(int newIndex) {
     nWildDieSides = 2*(newIndex+2);
 }
 
-void RollCompositionWidget::modifierChanged(void) {
-    nMod = modifierLineEdit->text().toInt();
+void RollCompositionWidget::modifierChanged(int val) {
+    nMod = val;
 }
 
-void RollCompositionWidget::rerollsChanged(void) {
-    nMod = rerollsLineEdit->text().toInt();
+void RollCompositionWidget::rerollsChanged(int val) {
+    nRerolls = val;
 }

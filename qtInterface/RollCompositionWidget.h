@@ -3,6 +3,7 @@
 #include <QFrame>
 #include <QComboBox>
 #include <QLineEdit>
+#include <QSpinBox>
 #include <memory>
 #include "../StochasticObject.h"
 
@@ -13,8 +14,8 @@ class RollCompositionWidget: public QWidget {
         QGridLayout *gridLayout;
         QComboBox *traitDieComboBox;
         QComboBox *wildDieComboBox;
-        QLineEdit *modifierLineEdit;
-        QLineEdit *rerollsLineEdit;
+        QSpinBox *modifierSpinBox;
+        QSpinBox *rerollsSpinBox;
 
         int nTraitDieSides;
         int nWildDieSides;
@@ -29,6 +30,6 @@ class RollCompositionWidget: public QWidget {
 
         void traitDieChanged(int newIndex);
         void wildDieChanged(int newIndex);
-        void modifierChanged(void);
-        void rerollsChanged(void);
+        void modifierChanged(int val);
+        void rerollsChanged(int val);
 };
