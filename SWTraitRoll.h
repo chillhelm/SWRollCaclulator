@@ -27,7 +27,7 @@ class SWTraitRoll: public StochasticObject {
         unsigned int nRerolls;
         int nMod;
     public:
-        SWTraitRoll(unsigned int nTraitDieSides, unsigned int nWildDieSides = 6, int nMod = 0);
+        SWTraitRoll(unsigned int nTraitDieSides, unsigned int nWildDieSides = 6, int nMod = 0, int nRerolls_ = 0);
         virtual ~SWTraitRoll(void) = default;
 
         virtual double distributionFunction(double x) const;

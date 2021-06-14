@@ -25,7 +25,7 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 #include "FlatMod.h"
 #include "RaiseCounter.h"
 
-SWTraitRoll::SWTraitRoll(unsigned int nTraitDieSides_, unsigned int nWildDieSides_, int nMod_): nTraitDieSides(nTraitDieSides_), nWildDieSides(nWildDieSides_), nMod(nMod_), nRerolls(0) {
+SWTraitRoll::SWTraitRoll(unsigned int nTraitDieSides_, unsigned int nWildDieSides_, int nMod_, int nRerolls_): nTraitDieSides(nTraitDieSides_), nWildDieSides(nWildDieSides_), nMod(nMod_), nRerolls(nRerolls_) {
 }
 
 double SWTraitRoll::distributionFunction(double dX) const {
