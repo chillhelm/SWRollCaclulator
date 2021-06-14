@@ -96,7 +96,7 @@ int main( int argc, char **argv )
     QObject::connect(plotButton, QOverload<bool>::of(&QPushButton::clicked), [rcw1,axisY, chart](bool){replot(chart,axisY, rcw1);});
     plotButton->resize(120,120);
     HBoxLayout->addWidget(plotButton);
-    RollSetupRow.setMinimumHeight(120);
+    RollSetupRow.setMinimumHeight(150);
     VBoxLayout->addWidget(&RollSetupRow);
     VBoxLayout->addWidget(chartView);
 

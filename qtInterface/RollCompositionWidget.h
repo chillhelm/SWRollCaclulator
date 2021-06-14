@@ -14,10 +14,12 @@ class RollCompositionWidget: public QWidget {
         QComboBox *traitDieComboBox;
         QComboBox *wildDieComboBox;
         QLineEdit *modifierLineEdit;
+        QLineEdit *rerollsLineEdit;
 
         int nTraitDieSides;
         int nWildDieSides;
         int nMod;
+        int nRerolls;
 
     public:
         RollCompositionWidget(QWidget *parent = nullptr);
@@ -28,4 +30,5 @@ class RollCompositionWidget: public QWidget {
         void traitDieChanged(int newIndex);
         void wildDieChanged(int newIndex);
         void modifierChanged(void);
+        void rerollsChanged(void);
 };

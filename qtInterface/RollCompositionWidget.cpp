@@ -11,6 +11,7 @@ RollCompositionWidget::RollCompositionWidget(QWidget *parent): QWidget(parent), 
     gridLayout->addWidget(new QLabel("Trait Die:", frame), 1, 1);
     gridLayout->addWidget(new QLabel("Wild Die:", frame),2,1);
     gridLayout->addWidget(new QLabel("Modifier:", frame),3,1);
+    gridLayout->addWidget(new QLabel("Rerolls:", frame),4,1);
     traitDieComboBox = new QComboBox(frame);
     traitDieComboBox->addItem("d4");
     traitDieComboBox->addItem("d6");
@@ -26,10 +27,13 @@ RollCompositionWidget::RollCompositionWidget(QWidget *parent): QWidget(parent), 
     wildDieComboBox->addItem("d12");
     wildDieComboBox->setCurrentIndex(1);
     modifierLineEdit = new QLineEdit(frame);
+    rerollsLineEdit = new QLineEdit(frame);
     gridLayout->addWidget(traitDieComboBox, 1, 2);
     gridLayout->addWidget(wildDieComboBox, 2, 2);
     gridLayout->addWidget(modifierLineEdit, 3, 2);
+    gridLayout->addWidget(rerollsLineEdit, 4, 2);
     modifierLineEdit->setInputMask("###");
+    rerollsLineEdit->setInputMask("###");
 
     QObject::connect(traitDieComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             [this](int newIndex) {this->traitDieChanged(newIndex);});
@@ -37,6 +41,8 @@ RollCompositionWidget::RollCompositionWidget(QWidget *parent): QWidget(parent), 
             [this](int newIndex) {this->wildDieChanged (newIndex);});
     QObject::connect(modifierLineEdit, QOverload<>::of(&QLineEdit::editingFinished),
             [this]() {this->modifierChanged();});
+    QObject::connect(rerollsLineEdit, QOverload<>::of(&QLineEdit::editingFinished),
+            [this]() {this->rerollsChanged();});
 
     resize(100,100);
 }
@@ -45,13 +51,14 @@ RollCompositionWidget::~RollCompositionWidget(void) {
     delete traitDieComboBox;
     delete wildDieComboBox;
     delete modifierLineEdit;
+    delete rerollsLineEdit;
     delete frame;
 }
 
 
 std::shared_ptr<StochasticObject> RollCompositionWidget::getRoll(void) const {
 
-    return std::make_shared<SWTraitRoll>(nTraitDieSides, nWildDieSides, nMod);
+    return std::make_shared<SWTraitRoll>(nTraitDieSides, nWildDieSides, nMod, nRerolls);
 }
 
 void RollCompositionWidget::traitDieChanged(int newIndex) {
@@ -65,4 +72,8 @@ void RollCompositionWidget::wildDieChanged(int newIndex) {
 
 void RollCompositionWidget::modifierChanged(void) {
     nMod = modifierLineEdit->text().toInt();
+}
+
+void RollCompositionWidget::rerollsChanged(void) {
+    nMod = rerollsLineEdit->text().toInt();
 }
