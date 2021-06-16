@@ -15,11 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 */
+#ifndef __MAINQTWINDOW_H__
+#define __MAINQTWINDOW_H__
 
-#include <memory>
-#include <cmath>
-
-#include <qapplication.h>
 #include <qpushbutton.h>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
@@ -34,17 +32,29 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 #include <QLabel>
 #include <QFrame>
 
-#include "MainQtWindow.h"
 #include "RollCompositionWidget.h"
 
-int main( int argc, char **argv )
-{
-    QApplication a( argc, argv );
+class MainQtWindow: public QWidget {
+    Q_OBJECT;
+    private:
+        RollCompositionWidget *rcw1;
+        QtCharts::QChart *chart;
+        QtCharts::QBarCategoryAxis *axisX;
+        QtCharts::QValueAxis *axisY;
+        QtCharts::QChartView *chartView;
+        QVBoxLayout *VBoxLayout;
+        QHBoxLayout *HBoxLayout;
+        QWidget *RollSetupRow;
 
-    MainQtWindow window;
-    window.show();
-    window.resize(900,800);
+        double fillBarSetFromStochasticObject(QtCharts::QBarSet& set, const std::shared_ptr<StochasticObject>& pStochasticObject);
+        int nRCWCount;
+    public:
+        MainQtWindow(QWidget *parent_=nullptr);
+        ~MainQtWindow(void);
 
-    return a.exec();
-}
+        void updateChart(void);
+        void addRCW(void);
+};
+
+#endif
 

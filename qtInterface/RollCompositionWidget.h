@@ -1,3 +1,6 @@
+#ifndef __ROLLCOMPOSITIONWIDGET_H__
+#define __ROLLCOMPOSITIONWIDGET_H__
+
 #include <QWidget>
 #include <QGridLayout>
 #include <QFrame>
@@ -33,3 +36,6 @@ class RollCompositionWidget: public QWidget {
         void modifierChanged(int val);
         void rerollsChanged(int val);
 };
+
+#endif
+
