@@ -44,7 +44,9 @@ double fillBarSetFromStochasticObject(QtCharts::QBarSet *set, const std::shared_
         *set << p;
         max = std::max(p,max);
     }
-    *set << (1.-pStochasticObject->distributionFunction(4.));
+    double p =100.*(1.-pStochasticObject->distributionFunction(3.));
+    max = std::max(p,max);
+    *set << p;
     return max;
 }
 
