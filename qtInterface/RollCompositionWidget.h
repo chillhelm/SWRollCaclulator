@@ -35,6 +35,11 @@ class RollCompositionWidget: public QWidget {
         void wildDieChanged(int newIndex);
         void modifierChanged(int val);
         void rerollsChanged(int val);
+
+        int getTraitDieSides() {return nTraitDieSides;};
+        int getWildDieSides() {return nWildDieSides;};
+        int getMod() {return nMod;};
+        int getRerolls() {return nRerolls;};
 };
 
 #endif

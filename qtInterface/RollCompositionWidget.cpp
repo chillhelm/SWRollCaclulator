@@ -4,7 +4,7 @@
 
 #include "RollCompositionWidget.h"
 
-RollCompositionWidget::RollCompositionWidget(QWidget *parent): QWidget(parent), nTraitDieSides(4), nWildDieSides(6), nMod(0) {
+RollCompositionWidget::RollCompositionWidget(QWidget *parent): QWidget(parent), nTraitDieSides(4), nWildDieSides(6), nMod(0), nRerolls(0) {
     frame = new QFrame(this);
     frame->setFrameStyle(QFrame::Box);
     gridLayout = new QGridLayout(frame);

@@ -37,7 +37,6 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 class MainQtWindow: public QWidget {
     Q_OBJECT;
     private:
-        RollCompositionWidget *rcw1;
         QtCharts::QChart *chart;
         QtCharts::QBarCategoryAxis *axisX;
         QtCharts::QValueAxis *axisY;

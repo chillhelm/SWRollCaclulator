@@ -24,7 +24,6 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 #include "MainQtWindow.h"
 
 MainQtWindow::MainQtWindow(QWidget* parent_): QWidget(parent_), nRCWCount(0) {
-    rcw1 = new RollCompositionWidget;
     chart = new QtCharts::QChart();
     chart->setTitle("Probabilities of Success and Failure");
     chart->setAnimationOptions(QtCharts::QChart::SeriesAnimations);
@@ -46,7 +45,6 @@ MainQtWindow::MainQtWindow(QWidget* parent_): QWidget(parent_), nRCWCount(0) {
 
     RollSetupRow = new QWidget(this);
     HBoxLayout = new QHBoxLayout(RollSetupRow);
-    HBoxLayout->addWidget(rcw1);
 
     QPushButton *addRCWButton = new QPushButton("Add Roll", RollSetupRow);
     QPushButton *plotButton = new QPushButton("Plot", RollSetupRow);
@@ -61,12 +59,12 @@ MainQtWindow::MainQtWindow(QWidget* parent_): QWidget(parent_), nRCWCount(0) {
     VBoxLayout->addWidget(RollSetupRow);
     VBoxLayout->addWidget(chartView);
 
+    addRCW();
     updateChart();
 
 }
 
 MainQtWindow::~MainQtWindow(void) {
-    delete rcw1;
     delete chart;
     delete axisX;
     delete axisY;
@@ -113,6 +111,6 @@ void MainQtWindow::updateChart(void) {
 
 void MainQtWindow::addRCW(void) {
     auto rcw = std::make_unique<RollCompositionWidget>();
-    ++nRCWCount;
     HBoxLayout->insertWidget(nRCWCount,rcw.release());
+    ++nRCWCount;
 }
