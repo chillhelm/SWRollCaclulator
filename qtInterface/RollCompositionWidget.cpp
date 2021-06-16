@@ -1,5 +1,6 @@
 #include <QLabel>
 #include <QResizeEvent>
+#include <QShowEvent>
 
 #include "../SWTraitRoll.h"
 
@@ -52,10 +53,11 @@ RollCompositionWidget::RollCompositionWidget(QWidget *parent): QWidget(parent), 
     QObject::connect(rerollsSpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
             [this](int val) {this->rerollsChanged(val);});
 
-    resize(100,100);
+    resize(150,150);
     deleteMeButton->resize(15,15);
     auto newX=frame->size().width()+frame->pos().x()-15;
     deleteMeButton->move(newX, frame->pos().y());
+    resizeEvent(nullptr);
 }
 
 RollCompositionWidget::~RollCompositionWidget(void) {
@@ -96,3 +98,8 @@ void RollCompositionWidget::resizeEvent(QResizeEvent* ev) {
     deleteMeButton->move(newX, frame->pos().y());
 }
 
+
+void RollCompositionWidget::showEvent(QShowEvent* ev) {
+    auto newX=frame->size().width()+frame->pos().x()-15;
+    deleteMeButton->move(newX, frame->pos().y());
+}

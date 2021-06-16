@@ -30,6 +30,7 @@ class RollCompositionWidget: public QWidget {
 
     protected:
         void resizeEvent(QResizeEvent *ev);
+        void showEvent(QShowEvent *ev);
     public:
         RollCompositionWidget(QWidget *parent = nullptr);
         virtual ~RollCompositionWidget(void);

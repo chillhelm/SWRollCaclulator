@@ -46,14 +46,22 @@ MainQtWindow::MainQtWindow(QWidget* parent_): QWidget(parent_), nRCWCount(0) {
     RollSetupRow = new QWidget(this);
     HBoxLayout = new QHBoxLayout(RollSetupRow);
 
-    QPushButton *addRCWButton = new QPushButton("Add Roll", RollSetupRow);
-    QPushButton *plotButton = new QPushButton("Plot", RollSetupRow);
+    QWidget *buttonBox = new QWidget(RollSetupRow);
+    buttonBox->setMinimumWidth(150);
+    QVBoxLayout *buttonBoxLayout = new QVBoxLayout(buttonBox);
+
+    QPushButton *addRCWButton = new QPushButton("Add Roll", buttonBox);
+    QPushButton *plotButton = new QPushButton("Plot", buttonBox);
     QObject::connect(plotButton, QOverload<bool>::of(&QPushButton::clicked), [this](bool){this->updateChart();});
     QObject::connect(addRCWButton, QOverload<bool>::of(&QPushButton::clicked), [this](bool){this->addRCW();});
-    plotButton->resize(120,120);
-    HBoxLayout->addWidget(addRCWButton);
-    HBoxLayout->addWidget(plotButton);
+    buttonBoxLayout->addWidget(addRCWButton);
+    buttonBoxLayout->addWidget(plotButton);
+    plotButton->resize(80,20);
+    addRCWButton->resize(80,20);
 
+    HBoxLayout->addStretch(0);
+    HBoxLayout->addWidget(buttonBox);
+    buttonBox->resize(80,150);
     RollSetupRow->setMinimumHeight(150);
 
     VBoxLayout->addWidget(RollSetupRow);
@@ -113,8 +121,10 @@ void MainQtWindow::addRCW(void) {
     auto rcw = std::make_unique<RollCompositionWidget>();
     HBoxLayout->insertWidget(nRCWCount,rcw.release());
     auto newRCW = (RollCompositionWidget*)HBoxLayout->itemAt(nRCWCount)->widget();
+    newRCW->setMinimumWidth(150);
     auto deleteItButton = newRCW->getDeleteMeButton();
     QObject::connect(deleteItButton, QOverload<bool>::of(&QPushButton::clicked), [newRCW,this](bool){--(this->nRCWCount); delete newRCW;});
 
+    HBoxLayout->invalidate();
     ++nRCWCount;
 }
