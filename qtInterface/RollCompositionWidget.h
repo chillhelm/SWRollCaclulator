@@ -7,8 +7,10 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QSpinBox>
+#include <QPushButton>
 #include <memory>
 #include "../StochasticObject.h"
+
 
 class RollCompositionWidget: public QWidget {
     Q_OBJECT
@@ -19,12 +21,15 @@ class RollCompositionWidget: public QWidget {
         QComboBox *wildDieComboBox;
         QSpinBox *modifierSpinBox;
         QSpinBox *rerollsSpinBox;
+        QPushButton *deleteMeButton;
 
         int nTraitDieSides;
         int nWildDieSides;
         int nMod;
         int nRerolls;
 
+    protected:
+        void resizeEvent(QResizeEvent *ev);
     public:
         RollCompositionWidget(QWidget *parent = nullptr);
         virtual ~RollCompositionWidget(void);
@@ -40,6 +45,8 @@ class RollCompositionWidget: public QWidget {
         int getWildDieSides() {return nWildDieSides;};
         int getMod() {return nMod;};
         int getRerolls() {return nRerolls;};
+
+        QPushButton *getDeleteMeButton(void) {return deleteMeButton;};
 };
 
 #endif

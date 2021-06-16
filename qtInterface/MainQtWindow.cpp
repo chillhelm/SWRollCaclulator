@@ -112,5 +112,9 @@ void MainQtWindow::updateChart(void) {
 void MainQtWindow::addRCW(void) {
     auto rcw = std::make_unique<RollCompositionWidget>();
     HBoxLayout->insertWidget(nRCWCount,rcw.release());
+    auto newRCW = (RollCompositionWidget*)HBoxLayout->itemAt(nRCWCount)->widget();
+    auto deleteItButton = newRCW->getDeleteMeButton();
+    QObject::connect(deleteItButton, QOverload<bool>::of(&QPushButton::clicked), [newRCW,this](bool){--(this->nRCWCount); delete newRCW;});
+
     ++nRCWCount;
 }

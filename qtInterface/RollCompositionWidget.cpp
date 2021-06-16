@@ -1,4 +1,5 @@
 #include <QLabel>
+#include <QResizeEvent>
 
 #include "../SWTraitRoll.h"
 
@@ -39,6 +40,9 @@ RollCompositionWidget::RollCompositionWidget(QWidget *parent): QWidget(parent), 
     rerollsSpinBox->setSingleStep(1);
     rerollsSpinBox->setMinimum(0);
 
+    deleteMeButton = new QPushButton("[X]",this);
+    deleteMeButton->show();
+
     QObject::connect(traitDieComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             [this](int newIndex) {this->traitDieChanged(newIndex);});
     QObject::connect(wildDieComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -49,6 +53,9 @@ RollCompositionWidget::RollCompositionWidget(QWidget *parent): QWidget(parent), 
             [this](int val) {this->rerollsChanged(val);});
 
     resize(100,100);
+    deleteMeButton->resize(15,15);
+    auto newX=frame->size().width()+frame->pos().x()-15;
+    deleteMeButton->move(newX, frame->pos().y());
 }
 
 RollCompositionWidget::~RollCompositionWidget(void) {
@@ -57,6 +64,8 @@ RollCompositionWidget::~RollCompositionWidget(void) {
     delete modifierSpinBox;
     delete rerollsSpinBox;
     delete frame;
+
+    delete deleteMeButton;
 }
 
 
@@ -81,3 +90,9 @@ void RollCompositionWidget::modifierChanged(int val) {
 void RollCompositionWidget::rerollsChanged(int val) {
     nRerolls = val;
 }
+
+void RollCompositionWidget::resizeEvent(QResizeEvent* ev) {
+    auto newX=frame->size().width()+frame->pos().x()-15;
+    deleteMeButton->move(newX, frame->pos().y());
+}
+
