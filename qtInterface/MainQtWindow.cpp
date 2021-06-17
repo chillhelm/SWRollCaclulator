@@ -37,6 +37,7 @@ MainQtWindow::MainQtWindow(QWidget* parent_): QWidget(parent_), nRCWCount(0) {
     axisY = new QtCharts::QValueAxis();
 
     chart->addAxis(axisY, Qt::AlignLeft);
+    axisY->setTickCount(10);
 
     chartView = new QtCharts::QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
