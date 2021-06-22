@@ -20,6 +20,7 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 #include <string>
 
 #include <QString>
+#include <QPen>
 
 #include "MainQtWindow.h"
 
@@ -35,6 +36,11 @@ MainQtWindow::MainQtWindow(QWidget* parent_): QWidget(parent_), nRCWCount(0) {
     chart->addAxis(axisX, Qt::AlignBottom);
 
     axisY = new QtCharts::QValueAxis();
+    QPen penYAxisLines;
+    penYAxisLines.setStyle(Qt::DashLine);
+    penYAxisLines.setBrush(Qt::gray);
+
+    axisY->setGridLinePen(penYAxisLines);
 
     chart->addAxis(axisY, Qt::AlignLeft);
     axisY->setTickCount(10);
@@ -71,6 +77,7 @@ MainQtWindow::MainQtWindow(QWidget* parent_): QWidget(parent_), nRCWCount(0) {
     addRCW();
     updateChart();
 
+    setWindowTitle("SW Roll Calculator");
 }
 
 MainQtWindow::~MainQtWindow(void) {
