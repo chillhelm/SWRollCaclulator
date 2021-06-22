@@ -38,7 +38,7 @@ MainQtWindow::MainQtWindow(QWidget* parent_): QWidget(parent_), nRCWCount(0) {
     axisY = new QtCharts::QValueAxis();
     QPen penYAxisLines;
     penYAxisLines.setStyle(Qt::DashLine);
-    penYAxisLines.setBrush(Qt::gray);
+    penYAxisLines.setBrush(Qt::lightGray);
 
     axisY->setGridLinePen(penYAxisLines);
 
@@ -78,6 +78,7 @@ MainQtWindow::MainQtWindow(QWidget* parent_): QWidget(parent_), nRCWCount(0) {
     updateChart();
 
     setWindowTitle("SW Roll Calculator");
+    setWhatsThis("SW Roll Calculator");
 }
 
 MainQtWindow::~MainQtWindow(void) {

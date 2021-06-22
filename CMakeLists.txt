@@ -29,5 +29,5 @@ add_executable(SWDmgCalculator main_attack.cpp)
 target_link_libraries(SWSuccessCalculator SWDiceRolls)
 target_link_libraries(SWDmgCalculator SWDiceRolls)
 
-add_subdirectory(qtInterface)
+add_subdirectory(qtInterface "./build")
 

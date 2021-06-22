@@ -18,9 +18,9 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 
 find_package(Qt5 COMPONENTS Core Widgets Charts REQUIRED )
 
-add_executable(qtInterface main.cpp RollCompositionWidget MainQtWindow)
+add_executable(SWRollCalculator main.cpp RollCompositionWidget MainQtWindow)
 
-set_property(TARGET qtInterface PROPERTY AUTOMOC ON)
+set_property(TARGET SWRollCalculator PROPERTY AUTOMOC ON)
 
-target_link_libraries(qtInterface SWDiceRolls Qt5::Widgets Qt5::Charts)
+target_link_libraries(SWRollCalculator SWDiceRolls Qt5::Widgets Qt5::Charts)
 
