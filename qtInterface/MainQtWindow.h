@@ -47,6 +47,8 @@ class MainQtWindow: public QWidget {
 
         double fillBarSetFromStochasticObject(QtCharts::QBarSet& set, const std::shared_ptr<StochasticObject>& pStochasticObject);
         int nRCWCount;
+
+        void hoveredBar(bool status, int index, QtCharts::QBarSet* set);
     public:
         MainQtWindow(QWidget *parent_=nullptr);
         ~MainQtWindow(void);

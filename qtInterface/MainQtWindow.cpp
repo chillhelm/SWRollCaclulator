@@ -117,6 +117,8 @@ void MainQtWindow::updateChart(void) {
         series->append(set0.release());
         ++count;
     }
+    QObject::connect(series, QOverload<bool,int,QtCharts::QBarSet*>::of(&QtCharts::QBarSeries::hovered), 
+            [this](bool status, int index, QtCharts::QBarSet* barset){this->hoveredBar(status, index, barset);});
     if(max<0.) max = 1.;
     auto y_lim = std::ceil(max/10.)*10.;
     axisY->setRange(0.,y_lim);
@@ -124,6 +126,7 @@ void MainQtWindow::updateChart(void) {
 
     series->attachAxis(axisX);
     series->attachAxis(axisY);
+
 }
 
 void MainQtWindow::addRCW(void) {
@@ -137,3 +140,10 @@ void MainQtWindow::addRCW(void) {
     HBoxLayout->invalidate();
     ++nRCWCount;
 }
+
+void MainQtWindow::hoveredBar(bool status, int index, QtCharts::QBarSet* set) {
+    if(status) { // On
+    } else { // Off
+    }
+}
+
