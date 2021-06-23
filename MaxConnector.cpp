@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "MaxConnector.h"
+#include <algorithm>
 
 MaxConnector::MaxConnector(const std::shared_ptr<StochasticObject> &pObject1_, const std::shared_ptr<StochasticObject> &pObject2_) : 
                 pObject1(pObject1_), pObject2(pObject2_) {
