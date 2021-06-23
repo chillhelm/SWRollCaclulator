@@ -55,6 +55,8 @@ class MainQtWindow: public QWidget {
 
         void updateChart(void);
         void addRCW(void);
+        void exportCSV(void);
+        void exportPNG(void);
 };
 
 #endif

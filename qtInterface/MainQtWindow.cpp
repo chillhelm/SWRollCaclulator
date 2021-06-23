@@ -18,9 +18,13 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <cmath>
 #include <string>
+#include <fstream>
 
 #include <QString>
 #include <QPen>
+#include <QFileDialog>
+#include <QImage>
+#include <QPainter>
 
 #include "MainQtWindow.h"
 
@@ -29,7 +33,7 @@ MainQtWindow::MainQtWindow(QWidget* parent_): QWidget(parent_), nRCWCount(0) {
     chart->setTitle("Probabilities of Success and Failure");
     chart->setAnimationOptions(QtCharts::QChart::SeriesAnimations);
     QStringList categories;
-    categories << "Crit. Fail" << "Fail" << "Success" << "S+1 Raise" << "S+2 Raise" << "S+3Raise"<<"S+>4 Raise";
+    categories << "Crit. Fail" << "Fail" << "Success" << "S+1 Raise" << "S+2 Raise" << "S+3Raise" << "S+4Raise"<<"S+>4 Raise";
 
     axisX = new QtCharts::QBarCategoryAxis();
     axisX->append(categories);
@@ -66,6 +70,16 @@ MainQtWindow::MainQtWindow(QWidget* parent_): QWidget(parent_), nRCWCount(0) {
     plotButton->resize(80,20);
     addRCWButton->resize(80,20);
 
+    QWidget *saveButtonBox = new QWidget(buttonBox);
+    QHBoxLayout *saveButtonsLayout = new QHBoxLayout(saveButtonBox);
+    QPushButton *exportCSVButton = new QPushButton("Export CSV", saveButtonBox);
+    QPushButton *exportPNGButton = new QPushButton("Save Plot", saveButtonBox);
+    QObject::connect(exportCSVButton, QOverload<bool>::of(&QPushButton::clicked), [this](bool){this->exportCSV();});
+    QObject::connect(exportPNGButton, QOverload<bool>::of(&QPushButton::clicked), [this](bool){this->exportPNG();});
+    saveButtonsLayout->addWidget(exportCSVButton);
+    saveButtonsLayout->addWidget(exportPNGButton);
+    buttonBoxLayout->addWidget(saveButtonBox);
+
     HBoxLayout->addStretch(0);
     HBoxLayout->addWidget(buttonBox);
     buttonBox->resize(80,150);
@@ -95,12 +109,12 @@ MainQtWindow::~MainQtWindow(void) {
 double MainQtWindow::fillBarSetFromStochasticObject(QtCharts::QBarSet& set, const std::shared_ptr<StochasticObject>& pStochasticObject) {
     double max = -std::numeric_limits<double>::infinity();
     set.remove(0, set.count());
-    for(double x=-1.;x<5;++x) {
+    for(double x=-1.;x<6;++x) {
         double p =100.*(pStochasticObject->distributionFunction(x) - pStochasticObject->distributionFunction(x-1.));
         set << p;
         max = std::max(p,max);
     }
-    double p =100.*(1.-pStochasticObject->distributionFunction(3.));
+    double p =100.*(1.-pStochasticObject->distributionFunction(4.));
     max = std::max(p,max);
     set << p;
     return max;
@@ -145,5 +159,55 @@ void MainQtWindow::hoveredBar(bool status, int index, QtCharts::QBarSet* set) {
     if(status) { // On
     } else { // Off
     }
+}
+
+void MainQtWindow::exportCSV(void) {
+    updateChart();
+    QFileDialog saveFileDialog(this, tr("Export as CSV"),"",tr("CSV File (*.csv);;All Files (*)"));
+    saveFileDialog.setDefaultSuffix(".csv");
+    saveFileDialog.setFileMode(QFileDialog::AnyFile);
+    QString filename;
+    saveFileDialog.exec();
+    auto fileNames = saveFileDialog.selectedFiles();
+    if(fileNames.size()<1)
+        return;
+    filename = fileNames[0];
+    if(filename=="")
+        return;
+    std::ofstream fsCSVFile(filename.toStdString().c_str());
+    fsCSVFile << "Result, "<<"Critical Fail, "<<"Fail, "<<"Success, "<<"Success + 1 Raise, "
+        <<"Success + 2 Raise, "<<"Success + 3 Raise, "<<"Success + 4 Raise, "<<"Success + >4 Raise"<<std::endl;
+    int rollIndex=1;
+    for (auto rcw :RollSetupRow->findChildren<RollCompositionWidget*>()){
+        auto roll = rcw->getRoll();
+        fsCSVFile<<"Roll "<<rollIndex<<", ";
+        for(double x=-1.;x<6;++x) {
+            double p =100.*(roll->distributionFunction(x) - roll->distributionFunction(x-1.));
+            fsCSVFile << p<<", ";
+        }
+        double p =100.*(1.-roll->distributionFunction(4.));
+        fsCSVFile<<p<<std::endl;
+    }
+}
+
+void MainQtWindow::exportPNG(void) {
+    updateChart();
+    QFileDialog saveFileDialog(this, tr("Save Plot to PNG"),"",tr("PNG Images (*.png);;All Files (*)"));
+    saveFileDialog.setDefaultSuffix(".png");
+    saveFileDialog.setFileMode(QFileDialog::AnyFile);
+    QString filename;
+    saveFileDialog.exec();
+    auto fileNames = saveFileDialog.selectedFiles();
+    if(fileNames.size()<1)
+        return;
+    filename = fileNames[0];
+    if(filename=="")
+        return;
+    if (!filename.endsWith(".png"))
+        filename+=".png";
+    QImage image(chartView->contentsRect().size(),QImage::Format_ARGB32);
+    QPainter p(&image);
+    chartView->render(&p);
+    image.save(filename, "PNG");
 }
 
