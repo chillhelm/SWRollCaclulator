@@ -100,14 +100,7 @@ MainQtWindow::MainQtWindow(QWidget* parent_): QWidget(parent_), nRCWCount(0), nP
 }
 
 MainQtWindow::~MainQtWindow(void) {
-    delete chart;
-    delete axisX;
-    delete axisY;
-    delete chartView;
 
-    delete VBoxLayout;
-    delete HBoxLayout;
-    delete RollSetupRow;
 }
 
 double MainQtWindow::fillBarSetFromStochasticObject(QtCharts::QBarSet& set, const std::shared_ptr<StochasticObject>& pStochasticObject) {
