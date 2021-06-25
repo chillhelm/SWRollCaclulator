@@ -12,21 +12,22 @@
 #include "../StochasticObject.h"
 
 
-class RollCompositionWidget: public QWidget {
+class RollCompositionWidget: public QFrame {
     Q_OBJECT
     private:
-        QFrame *frame;
         QGridLayout *gridLayout;
         QComboBox *traitDieComboBox;
         QComboBox *wildDieComboBox;
         QSpinBox *modifierSpinBox;
         QSpinBox *rerollsSpinBox;
+        QSpinBox *targetNumberSpinBox;
         QPushButton *deleteMeButton;
 
         int nTraitDieSides;
         int nWildDieSides;
         int nMod;
         int nRerolls;
+        int nTargetNumber;
 
     protected:
         void resizeEvent(QResizeEvent *ev);
@@ -41,6 +42,7 @@ class RollCompositionWidget: public QWidget {
         void wildDieChanged(int newIndex);
         void modifierChanged(int val);
         void rerollsChanged(int val);
+        void targetNumberChanged(int val);
 
         int getTraitDieSides() {return nTraitDieSides;};
         int getWildDieSides() {return nWildDieSides;};
