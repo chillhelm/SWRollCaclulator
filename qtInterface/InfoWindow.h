@@ -16,20 +16,17 @@ You should have received a copy of the GNU General Public License
 along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <QtWidgets/QApplication>
+#ifndef __INFOWINDOW_H__
+#define __INFOWINDOW_H__
 
-#include "MainQtWindow.h"
-#include "RollCompositionWidget.h"
-#include "InfoWindow.h"
+#include <QWidget>
 
-int main( int argc, char **argv )
-{
-    QApplication a( argc, argv );
+class InfoWindow: public QWidget {
+    Q_OBJECT;
+    private:
+    public:
+        InfoWindow(QWidget *parent_=nullptr);
+        ~InfoWindow(void);
+};
 
-    MainQtWindow window;
-    window.show();
-    window.resize(900,800);
-
-    return a.exec();
-}
-
+#endif

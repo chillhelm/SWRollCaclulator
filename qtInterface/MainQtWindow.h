@@ -33,6 +33,7 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 #include <QFrame>
 
 #include "RollCompositionWidget.h"
+#include "InfoWindow.h"
 
 class MainQtWindow: public QWidget {
     Q_OBJECT;
@@ -49,6 +50,7 @@ class MainQtWindow: public QWidget {
         int nRCWCount;
 
         void hoveredBar(bool status, int index, QtCharts::QBarSet* set);
+        void createMenuBar(void);
     public:
         MainQtWindow(QWidget *parent_=nullptr);
         ~MainQtWindow(void);

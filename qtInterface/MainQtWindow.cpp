@@ -25,6 +25,7 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 #include <QFileDialog>
 #include <QImage>
 #include <QPainter>
+#include <QMenuBar>
 
 #include "MainQtWindow.h"
 
@@ -90,6 +91,8 @@ MainQtWindow::MainQtWindow(QWidget* parent_): QWidget(parent_), nRCWCount(0) {
 
     addRCW();
     updateChart();
+
+    createMenuBar();
 
     setWindowTitle("SW Roll Calculator");
     setWhatsThis("SW Roll Calculator");
@@ -211,3 +214,14 @@ void MainQtWindow::exportPNG(void) {
     image.save(filename, "PNG");
 }
 
+void MainQtWindow::createMenuBar(void) {
+    QMenuBar *menuBar = new QMenuBar(this);
+    QMenu *main = new QMenu("Menu");
+    menuBar->addMenu(main);
+    this->layout()->setMenuBar(menuBar);
+    auto aboutAction = main->addAction("About");
+    QObject::connect(aboutAction, QOverload<bool>::of(&QAction::triggered), [this](bool){InfoWindow *iw = new InfoWindow; iw->show();});
+    auto optionsAction = main->addAction("Options");
+    auto closeAction = main->addAction("Close");
+    QObject::connect(closeAction, QOverload<bool>::of(&QAction::triggered), [this](bool){this->close();});
+}
