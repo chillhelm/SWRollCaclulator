@@ -19,6 +19,7 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 #include <cmath>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 #include <QString>
 #include <QPen>
@@ -29,12 +30,12 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "MainQtWindow.h"
 
-MainQtWindow::MainQtWindow(QWidget* parent_): QWidget(parent_), nRCWCount(0) {
+MainQtWindow::MainQtWindow(QWidget* parent_): QWidget(parent_), nRCWCount(0), nPlotRaiseNumber(4), bDisplayExactProbabilities(true), optionsWindow(new OptionsMenu(*this, nullptr)) {
     chart = new QtCharts::QChart();
     chart->setTitle("Probabilities of Success and Failure");
     chart->setAnimationOptions(QtCharts::QChart::SeriesAnimations);
     QStringList categories;
-    categories << "Crit. Fail" << "Fail" << "Success" << "S+1 Raise" << "S+2 Raise" << "S+3Raise" << "S+4Raise"<<"S+>4 Raise";
+    categories << "Crit. Fail" << "(Non-Crit) Fail" << "Success" << "S+1 Raise" << "S+2 Raise" << "S+3Raise" << "S+4Raise"<<"S+>4 Raise";
 
     axisX = new QtCharts::QBarCategoryAxis();
     axisX->append(categories);
@@ -112,18 +113,41 @@ MainQtWindow::~MainQtWindow(void) {
 double MainQtWindow::fillBarSetFromStochasticObject(QtCharts::QBarSet& set, const std::shared_ptr<StochasticObject>& pStochasticObject) {
     double max = -std::numeric_limits<double>::infinity();
     set.remove(0, set.count());
-    for(double x=-1.;x<6;++x) {
-        double p =100.*(pStochasticObject->distributionFunction(x) - pStochasticObject->distributionFunction(x-1.));
+    for(double x=-1.;x<nPlotRaiseNumber+2;++x) {
+        double p = .0;
+        if(bDisplayExactProbabilities || x<1.)
+            p = 100.*(pStochasticObject->distributionFunction(x) - pStochasticObject->distributionFunction(x-1.));
+        else
+            p = 100.*(1. - pStochasticObject->distributionFunction(x-1.));
         set << p;
         max = std::max(p,max);
     }
-    double p =100.*(1.-pStochasticObject->distributionFunction(4.));
-    max = std::max(p,max);
-    set << p;
+    if(bDisplayExactProbabilities) {
+        double p =100.*(1.-pStochasticObject->distributionFunction(nPlotRaiseNumber+1.));
+        max = std::max(p,max);
+        set << p;
+    }
     return max;
 }
 
 void MainQtWindow::updateChart(void) {
+    QStringList categories;
+    categories << "Critical Fail"<<"(Non-Crit) Fail"<<(bDisplayExactProbabilities?"Success":">=Success");
+    for (int i=1; i<nPlotRaiseNumber+1; ++i) {
+        std::stringstream s;
+        s<<"Success + "<<(bDisplayExactProbabilities?"":">=")<<i<<(i==1?" Raise":" Raises");
+        categories<<s.str().c_str();
+    }
+    if(bDisplayExactProbabilities) {
+        std::stringstream s;
+        s<<"Success + >="<<nPlotRaiseNumber+1<<" Raises";
+        categories<<s.str().c_str();
+    }
+    delete axisX;
+    axisX = new QtCharts::QBarCategoryAxis();
+    axisX->append(categories);
+
+    chart->addAxis(axisX, Qt::AlignBottom);
     chart->removeAllSeries();
     auto series = new QtCharts::QBarSeries;
     auto count = 1;
@@ -178,18 +202,31 @@ void MainQtWindow::exportCSV(void) {
     if(filename=="")
         return;
     std::ofstream fsCSVFile(filename.toStdString().c_str());
-    fsCSVFile << "Result, "<<"Critical Fail, "<<"Fail, "<<"Success, "<<"Success + 1 Raise, "
-        <<"Success + 2 Raise, "<<"Success + 3 Raise, "<<"Success + 4 Raise, "<<"Success + >4 Raise"<<std::endl;
+    fsCSVFile << "Result, "<<"Critical Fail, "<<"(Non-Crit) Fail, "<<(bDisplayExactProbabilities?"":">=")<<"Success";
+    for (int i=1; i<nPlotRaiseNumber+1; ++i) {
+        fsCSVFile<<", Success + "<<(bDisplayExactProbabilities?"":">=")<<i<<(i==1?" Raise":" Raises");
+    }
+    if(bDisplayExactProbabilities)
+        fsCSVFile<<", Success + >="<<nPlotRaiseNumber+1<<" Raises" <<std::endl;
+    else
+        fsCSVFile<<std::endl;
     int rollIndex=1;
     for (auto rcw :RollSetupRow->findChildren<RollCompositionWidget*>()){
         auto roll = rcw->getRoll();
         fsCSVFile<<"Roll "<<rollIndex<<", ";
-        for(double x=-1.;x<6;++x) {
-            double p =100.*(roll->distributionFunction(x) - roll->distributionFunction(x-1.));
+        for(double x=-1.;x<nPlotRaiseNumber+2;++x) {
+            double p = .0;
+            if(bDisplayExactProbabilities || x<1.)
+                p = 100.*(roll->distributionFunction(x) - roll->distributionFunction(x-1.));
+            else
+                p = 100.*(1. - roll->distributionFunction(x-1.));
             fsCSVFile << p<<", ";
         }
-        double p =100.*(1.-roll->distributionFunction(4.));
-        fsCSVFile<<p<<std::endl;
+        if(bDisplayExactProbabilities) {
+            double p =100.*(1.-roll->distributionFunction(nPlotRaiseNumber));
+            fsCSVFile<<p;
+        }
+        fsCSVFile<<std::endl;
     }
 }
 
@@ -222,6 +259,18 @@ void MainQtWindow::createMenuBar(void) {
     auto aboutAction = main->addAction("About");
     QObject::connect(aboutAction, QOverload<bool>::of(&QAction::triggered), [this](bool){InfoWindow *iw = new InfoWindow; iw->show();});
     auto optionsAction = main->addAction("Options");
+    QObject::connect(optionsAction, QOverload<bool>::of(&QAction::triggered), [this](bool){optionsWindow->show();});
     auto closeAction = main->addAction("Close");
     QObject::connect(closeAction, QOverload<bool>::of(&QAction::triggered), [this](bool){this->close();});
 }
+
+void MainQtWindow::setPlotRaiseNumber(int nPlotRaiseNumber_) {
+    nPlotRaiseNumber = nPlotRaiseNumber_;
+    updateChart();
+}
+
+void MainQtWindow::setDisplayExactProbabilities(bool bToggle_) {
+    bDisplayExactProbabilities = bToggle_;
+    updateChart();
+}
+

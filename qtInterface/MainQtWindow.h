@@ -18,8 +18,8 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef __MAINQTWINDOW_H__
 #define __MAINQTWINDOW_H__
 
-#include <qpushbutton.h>
-#include <QtWidgets/QApplication>
+#include <memory>
+
 #include <QtWidgets/QMainWindow>
 #include <QtCharts/QChartView>
 #include <QtCharts/QBarSeries>
@@ -32,8 +32,11 @@ along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
 #include <QLabel>
 #include <QFrame>
 
+class MainQtWindow;
+
 #include "RollCompositionWidget.h"
 #include "InfoWindow.h"
+#include "OptionsMenu.h"
 
 class MainQtWindow: public QWidget {
     Q_OBJECT;
@@ -46,11 +49,16 @@ class MainQtWindow: public QWidget {
         QHBoxLayout *HBoxLayout;
         QWidget *RollSetupRow;
 
-        double fillBarSetFromStochasticObject(QtCharts::QBarSet& set, const std::shared_ptr<StochasticObject>& pStochasticObject);
+        int nPlotRaiseNumber;
         int nRCWCount;
+        bool bDisplayExactProbabilities;
+        std::unique_ptr<OptionsMenu> optionsWindow;
+
+        double fillBarSetFromStochasticObject(QtCharts::QBarSet& set, const std::shared_ptr<StochasticObject>& pStochasticObject);
 
         void hoveredBar(bool status, int index, QtCharts::QBarSet* set);
         void createMenuBar(void);
+
     public:
         MainQtWindow(QWidget *parent_=nullptr);
         ~MainQtWindow(void);
@@ -59,6 +67,9 @@ class MainQtWindow: public QWidget {
         void addRCW(void);
         void exportCSV(void);
         void exportPNG(void);
+
+        void setPlotRaiseNumber(int nPlotRaiseNumber_);
+        void setDisplayExactProbabilities(bool bToggle_);
 };
 
 #endif

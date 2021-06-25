@@ -1,4 +1,4 @@
-#[[
+/*
 Copyright 2021 Wilhelm Neubert
 This file is part of SW Roll Calculator.
 
@@ -14,13 +14,24 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with SW Roll Calculator.  If not, see <https://www.gnu.org/licenses/>.
-]]
+*/
 
-find_package(Qt5 COMPONENTS Core Widgets Charts REQUIRED )
+#ifndef __OPTIONSMENU_H__
+#define __OPTIONSMENU_H__
 
-add_executable(SWRollCalculator main.cpp RollCompositionWidget MainQtWindow InfoWindow OptionsMenu)
+#include <QWidget>
+class OptionsMenu;
+#include "MainQtWindow.h"
 
-set_property(TARGET SWRollCalculator PROPERTY AUTOMOC ON)
+class OptionsMenu: public QWidget {
+    private:
+        void raiseNumberChanged(int val);
+        void probDisplayModeComboBoxChanged(int newIndex);
 
-target_link_libraries(SWRollCalculator SWDiceRolls Qt5::Widgets Qt5::Charts)
+        MainQtWindow& optionsTarget;
+    public:
+        OptionsMenu(MainQtWindow& optionsTarget_, QWidget* parent_=nullptr);
+        ~OptionsMenu(void);
+};
 
+#endif
