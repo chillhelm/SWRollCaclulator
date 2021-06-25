@@ -36,7 +36,7 @@ options Menu ([Menu]->[Options]).
 You can save the plot as PNG file or export the probabilities as a CSV (Comma Seperated Values) File using the corresponding buttons on the top right.
 
 ## Feedback
-Any feedback is welcome ever to reddit.com/u/chillhelm or on github.com/chillhelm/SWRollCalculator
+Any feedback is welcome either to reddit.com/u/chillhelm or on github.com/chillhelm/SWRollCalculator
 
 ## Building
 This program requires Qt 5.12 and CMake 3.4. It may work with newer versions of Qt and CMake as well, I just haven't tested it.
